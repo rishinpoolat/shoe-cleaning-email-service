@@ -11,7 +11,7 @@ if (!resendApiKey) {
 const resend = new Resend(resendApiKey)
 
 // Email configuration
-const FROM_EMAIL = process.env.FROM_EMAIL || 'OFFseason <no-reply@offseasonshoes.com>'
+const FROM_EMAIL = 'OFFseason <no-reply@offseasonshoes.com>'
 const BUSINESS_EMAIL = 'OFFseason <info@offseasonshoes.com>'
 const CC_EMAILS = [
   'info@offseasonclothing.co.uk',
