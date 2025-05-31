@@ -1,223 +1,372 @@
 # Shoe Cleaning Email Service
 
-A dedicated Bun + Hono application for handling shoe cleaning email notifications with PDF attachments and order tracking.
+A dedicated Bun + Hono email service for OFFseason shoe cleaning notifications with PDF attachment support and order tracking.
 
 ## 🚀 Features
 
-- **Send Label**: Email shipping labels as PDF attachments
-- **Shipment Received**: Notify customers when shoes arrive for cleaning  
-- **Ready to Ship**: Confirm completion and return shipping
-- **React Email Templates**: Professional, responsive email designs
-- **Database Integration**: Connects to existing Supabase database
-- **Business Notifications**: CC internal team on all communications
+- **📧 Three Email Types**: Label sending, shipment received, and completion notifications
+- **📎 PDF Attachments**: Send shipping labels as email attachments
+- **📱 React Email Templates**: Professional, responsive email designs
+- **🗄️ Database Integration**: Connects to existing Supabase database
+- **👥 Team Notifications**: Automatic business team notifications
+- **⚡ Fast Performance**: Built with Bun and Hono for optimal speed
+- **🔒 Type Safety**: Full TypeScript coverage
 
 ## 📁 Project Structure
 
 ```
 src/
-├── routes/                     # API endpoints
-│   ├── send-label.ts          # POST /send-label
-│   ├── shipment-received.ts   # POST /shipment-received  
-│   └── ready-to-ship.ts       # POST /ready-to-ship
 ├── components/
-│   └── emails/                # React email templates
-│       ├── label-email.tsx
+│   └── emails/                    # React email templates
+│       ├── label-email.tsx       # Shipping label email
 │       ├── shipment-received-email.tsx
 │       └── ready-to-ship-email.tsx
+├── routes/                        # API endpoints
+│   ├── send-label.ts             # POST /send-label
+│   ├── shipment-received.ts      # POST /shipment-received
+│   └── ready-to-ship.ts          # POST /ready-to-ship
 ├── services/
-│   ├── database.ts            # Supabase connection
-│   └── email.ts               # Resend email service
+│   ├── database.ts               # Supabase connection
+│   └── email.ts                  # Resend email service
 ├── types/
-│   └── index.ts               # TypeScript definitions
-└── index.ts                   # Main Hono server
+│   └── index.ts                  # TypeScript definitions
+└── index.ts                      # Main Hono server
 ```
 
-## 🛠 Installation
+## 🛠 Installation & Setup
 
-1. **Install dependencies**:
+### Prerequisites
+- [Bun](https://bun.sh) installed
+- Resend account with API key
+- Supabase database access
+
+### Quick Start
+
+1. **Clone and install dependencies**
    ```bash
+   cd shoe-cleaning-email-service
    bun install
    ```
 
-2. **Set up environment variables**:
+2. **Set up environment variables**
    ```bash
    cp .env.example .env
    # Edit .env with your actual values
    ```
 
-3. **Run development server**:
-   ```bash
-   bun run dev
+3. **Configure your environment**
+   ```env
+   PORT=3001
+   RESEND_API_KEY=re_your_resend_api_key_here
+   SUPABASE_URL=https://your-project-id.supabase.co
+   SUPABASE_ANON_KEY=your_supabase_anon_key_here
    ```
 
-4. **Production build**:
+4. **Start the service**
    ```bash
-   bun run build
-   bun start
+   # Development mode
+   bun run dev
+   
+   # Production mode
+   bun run start
    ```
 
 ## 📡 API Endpoints
 
-### POST /send-label
-Send shipping label with PDF attachment.
+### Health Check
+```bash
+GET /
+# Returns service status and available endpoints
+```
 
-**Content-Type**: `multipart/form-data`
+### 1. Send Shipping Label
+```bash
+POST /send-label
+Content-Type: multipart/form-data
 
-**Body**:
-- `orderReference` (string): Order reference number
-- `label` (File): PDF file attachment
+# Body (form data):
+# - orderReference: string
+# - label: File (PDF)
+```
 
-**Example**:
+**Example:**
 ```bash
 curl -X POST http://localhost:3001/send-label \
   -F "orderReference=OS-CLEAN-1234567890" \
   -F "label=@shipping-label.pdf"
 ```
 
-### POST /shipment-received  
-Notify customer when shoes are received for cleaning.
+### 2. Shipment Received Notification
+```bash
+POST /shipment-received
+Content-Type: application/json
 
-**Content-Type**: `application/json`
-
-**Body**:
-```json
 {
   "orderReference": "OS-CLEAN-1234567890"
 }
 ```
 
-### POST /ready-to-ship
-Confirm cleaning completion and return shipping.
+### 3. Ready to Ship Notification
+```bash
+POST /ready-to-ship
+Content-Type: application/json
 
-**Content-Type**: `application/json`
-
-**Body**:
-```json
 {
   "orderReference": "OS-CLEAN-1234567890",
-  "trackingNumber": "RM123456789GB" // optional
+  "trackingNumber": "RM123456789GB"  // optional
 }
 ```
 
-## 🔧 Environment Variables
+## 🔄 Email Workflow
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `PORT` | Server port (default: 3001) | No |
-| `RESEND_API_KEY` | Resend API key for sending emails | Yes |
-| `SUPABASE_URL` | Supabase project URL | Yes |
-| `SUPABASE_ANON_KEY` | Supabase anonymous key | Yes |
+The service handles a complete 3-step email sequence:
 
-## 📧 Email Templates
+1. **📋 Order Confirmed** → Customer receives initial confirmation (handled by main app)
+2. **📦 Label Ready** → `POST /send-label` sends shipping label with PDF attachment
+3. **👀 Shoes Received** → `POST /shipment-received` confirms receipt and cleaning start
+4. **✨ Cleaning Complete** → `POST /ready-to-ship` notifies completion and return shipping
 
-All email templates follow OFFseason's brand guidelines with:
-- Professional responsive design
-- Order details and status updates
-- Clear next steps for customers  
-- Care instructions and tips
-- Consistent styling with main website
+## 📧 Email Configuration
 
-## 📊 Database Schema
+### Customer Emails
+- **From:** `OFFseason <no-reply@offseasonshoes.com>`
+- **Templates:** Professional React Email components
+- **Features:** Order details, progress tracking, care instructions
+
+### Business Notifications
+- **To:** `OFFseason <info@offseasonshoes.com>`
+- **CC:** Team members (info, ash, developers)
+- **Purpose:** Internal order tracking and customer communication awareness
+
+### Email Templates
+
+#### Label Email
+- Shipping instructions with PDF attachment
+- Step-by-step packaging guide
+- Royal Mail drop-off locations
+
+#### Shipment Received Email
+- Confirmation of receipt
+- 5-step cleaning process explanation
+- Estimated completion timeline
+
+#### Ready to Ship Email
+- Completion celebration
+- Care tips for clean shoes
+- Delivery tracking information
+
+## 🗄️ Database Schema
 
 The service expects these Supabase tables:
-- `shoe_cleaning_orders` - Order information
-- `web_customers` - Customer details  
-- `shoe_cleaning_packages` - Service packages
 
-## 🔄 Order Status Flow
+### `shoe_cleaning_orders`
+- `id`, `order_reference`, `customer_id`, `package_id`
+- `status`, `shoe_type`, `quantity`, `special_instructions`
+- `total_amount`, `created_at`, `updated_at`
 
-1. **Order Created** → Initial confirmation (handled by main app)
-2. **Label Sent** → `POST /send-label` updates status to `label_sent`
-3. **Shoes Received** → `POST /shipment-received` updates to `received`  
-4. **Cleaning Complete** → `POST /ready-to-ship` updates to `completed`
+### `web_customers`
+- `id`, `first_name`, `last_name`, `email`, `phone`
+
+### `shoe_cleaning_packages`
+- `id`, `name`, `description`, `price`
+
+## 🔧 Environment Variables
+
+| Variable | Required | Description | Example |
+|----------|----------|-------------|---------|
+| `PORT` | No | Server port (default: 3001) | `3001` |
+| `RESEND_API_KEY` | **Yes** | Resend API key for emails | `re_abc123...` |
+| `SUPABASE_URL` | **Yes** | Supabase project URL | `https://abc.supabase.co` |
+| `SUPABASE_ANON_KEY` | **Yes** | Supabase anonymous key | `eyJhbGci...` |
+
+### Getting API Keys
+
+#### Resend API Key
+1. Sign up at [resend.com](https://resend.com)
+2. Go to **API Keys** → **Create API Key**
+3. Copy the key (starts with `re_`)
+
+#### Supabase Credentials
+1. Open your [Supabase project](https://app.supabase.com)
+2. Go to **Settings** → **API**
+3. Copy **Project URL** and **anon/public** key
 
 ## 🚀 Development
 
-**Start development server**:
+### Available Scripts
 ```bash
+# Development with hot reload
 bun run dev
+
+# Production server
+bun run start
+
+# Build for production
+bun run build
+
+# Type checking
+bun run type-check
+
+# Tests
+bun test
 ```
 
-**Health check**:
+### Building
 ```bash
-curl http://localhost:3001/
+# Create production build
+bun run build
+
+# Build output will be in ./dist/
+ls -la dist/
 ```
 
 ## 📦 Deployment
 
-This service can be deployed to:
-- Railway
-- Vercel  
-- Any platform supporting Bun/Node.js
+The service can be deployed to:
 
-Ensure environment variables are configured in your deployment platform.
+### Railway (Recommended)
+1. Connect GitHub repository
+2. Set environment variables
+3. Deploy automatically
 
-## 🎯 Usage Examples
+### Vercel
+1. Import project from GitHub
+2. Configure environment variables
+3. Deploy
 
-### Send Label with PDF
-```javascript
-const formData = new FormData()
-formData.append('orderReference', 'OS-CLEAN-1234567890')
-formData.append('label', pdfFile)
-
-const response = await fetch('http://localhost:3001/send-label', {
-  method: 'POST',
-  body: formData
-})
+### Docker
+```dockerfile
+FROM oven/bun:1 as base
+WORKDIR /app
+COPY package.json bun.lockb ./
+RUN bun install
+COPY . .
+RUN bun run build
+EXPOSE 3001
+CMD ["bun", "start"]
 ```
 
-### Notify Shipment Received
-```javascript
-const response = await fetch('http://localhost:3001/shipment-received', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    orderReference: 'OS-CLEAN-1234567890'
-  })
-})
+## 🛡️ Security & Best Practices
+
+### Domain Verification
+- **Required:** Verify `offseasonshoes.com` in Resend
+- **DNS Records:** Add TXT and CNAME records from Resend
+- **Status:** Check verification in Resend dashboard
+
+### Environment Security
+- Keep `.env` files private (in `.gitignore`)
+- Use different API keys for development/production
+- Never commit API keys to Git
+- Rotate keys regularly
+
+### Rate Limiting
+- Built-in delays between customer and business emails
+- Automatic retry logic for rate limit errors
+- 3-attempt retry with exponential backoff
+
+## 🔍 Troubleshooting
+
+### Common Issues
+
+#### "Missing environment variables"
+```bash
+# Check your .env file exists and has all required variables
+cat .env
 ```
 
-### Confirm Ready to Ship
-```javascript
-const response = await fetch('http://localhost:3001/ready-to-ship', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    orderReference: 'OS-CLEAN-1234567890',
-    trackingNumber: 'RM123456789GB'
-  })
-})
+#### "Domain not verified" email errors
+- Verify `offseasonshoes.com` in Resend dashboard
+- Check DNS records are properly configured
+- Wait 15-30 minutes for DNS propagation
+
+#### "Order not found" database errors
+- Verify order reference exists in `shoe_cleaning_orders` table
+- Check Supabase connection and permissions
+- Ensure database schema matches expected structure
+
+#### Build errors
+```bash
+# Clean install
+rm -rf node_modules bun.lockb
+bun install
+
+# Try build again
+bun run build
 ```
 
-## 🔍 Error Handling
+### Debug Mode
+```bash
+# Run with debug logging
+DEBUG=* bun run dev
 
-All endpoints return standardized JSON responses:
+# Check service health
+curl http://localhost:3001/
+```
 
-**Success**:
-```json
+## 📊 Monitoring
+
+### Health Checks
+```bash
+# Service status
+curl http://localhost:3001/
+
+# Response should include:
 {
-  "success": true,
-  "message": "Email sent successfully",
-  "data": { ... }
+  "message": "Shoe Cleaning Email Service",
+  "version": "1.0.0",
+  "status": "healthy",
+  "endpoints": [...]
 }
 ```
 
-**Error**:
-```json
-{
-  "success": false,
-  "message": "Failed to send email",
-  "error": "Detailed error message"
-}
-```
+### Logging
+- Console logs for all email attempts
+- Error tracking with stack traces
+- Request/response logging via Hono middleware
 
 ## 🤝 Contributing
 
 1. Create feature branch from `main`
-2. Make changes and test locally  
-3. Submit pull request for review
-4. Merge to `main` after approval
+2. Make changes and test locally
+3. Submit pull request with description
+4. Merge after code review
+
+### Code Style
+- TypeScript for type safety
+- ESLint + Prettier for formatting
+- Conventional commit messages
+- Comprehensive error handling
+
+## 📄 License
+
+MIT License - see LICENSE file for details
 
 ---
 
-Built with ❤️ using Bun + Hono + React Email
+## 🎯 Quick Reference
+
+### Start Service
+```bash
+bun run dev  # Development
+bun start    # Production
+```
+
+### Send Test Email
+```bash
+# Label email with PDF
+curl -X POST http://localhost:3001/send-label \
+  -F "orderReference=OS-CLEAN-TEST" \
+  -F "label=@test-label.pdf"
+
+# Shipment received
+curl -X POST http://localhost:3001/shipment-received \
+  -H "Content-Type: application/json" \
+  -d '{"orderReference": "OS-CLEAN-TEST"}'
+
+# Ready to ship
+curl -X POST http://localhost:3001/ready-to-ship \
+  -H "Content-Type: application/json" \
+  -d '{"orderReference": "OS-CLEAN-TEST", "trackingNumber": "RM123456789GB"}'
+```
+
+**Built with ❤️ by OFFseason using Bun + Hono + React Email**
