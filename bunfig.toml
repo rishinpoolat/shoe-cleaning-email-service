@@ -1,0 +1,21 @@
+[install]
+# Configure package installation
+
+[build]
+# Build configuration
+entrypoints = ["./src/index.ts"]
+outdir = "./dist"
+target = "bun"
+sourcemap = "external"
+minify = false
+
+# External dependencies
+external = [
+  "@react-email/components",
+  "@react-email/render", 
+  "@supabase/supabase-js",
+  "resend",
+  "zod",
+  "@hono/zod-validator",
+  "react"
+]

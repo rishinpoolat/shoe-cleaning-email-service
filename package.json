@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "bun run --hot src/index.ts",
     "start": "bun src/index.ts",
-    "build": "bun build src/index.ts --outdir=dist",
+    "build": "bun build src/index.ts --outdir=dist --target=bun --external @react-email/components --external @react-email/render --external @supabase/supabase-js --external resend --external zod --external @hono/zod-validator",
+    "build:simple": "bun build src/index.ts --outdir=dist",
+    "type-check": "tsc --noEmit",
     "test": "bun test"
   },
   "dependencies": {
@@ -22,6 +24,7 @@
   },
   "devDependencies": {
     "@types/react": "^18.2.0",
+    "@types/node": "^20.0.0",
     "bun-types": "latest",
     "typescript": "^5.0.0"
   },

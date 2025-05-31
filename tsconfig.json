@@ -17,7 +17,11 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["bun-types"]
+    "types": ["bun-types"],
+    "declaration": false,
+    "outDir": "./dist",
+    "removeComments": true,
+    "noEmitOnError": false
   },
   "include": [
     "src/**/*"
