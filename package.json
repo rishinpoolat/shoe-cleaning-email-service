@@ -1,0 +1,37 @@
+{
+  "name": "shoe-cleaning-email-service",
+  "version": "1.0.0",
+  "description": "Dedicated email service for shoe cleaning notifications",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "bun run --hot src/index.ts",
+    "start": "bun src/index.ts",
+    "build": "bun build src/index.ts --outdir=dist",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "hono": "^4.0.0",
+    "@hono/node-server": "^1.8.0",
+    "@hono/zod-validator": "^0.2.2",
+    "resend": "^3.2.0",
+    "react": "^18.2.0",
+    "@react-email/components": "^0.0.15",
+    "@react-email/render": "^0.0.12",
+    "@supabase/supabase-js": "^2.39.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "bun-types": "latest",
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "bun",
+    "hono",
+    "email",
+    "shoe-cleaning",
+    "notifications"
+  ],
+  "author": "OFFseason",
+  "license": "MIT"
+}
