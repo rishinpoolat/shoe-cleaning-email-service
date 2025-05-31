@@ -81,7 +81,7 @@ app.post('/', zValidator('json', readyToShipSchema), async (c) => {
     )
 
     // Update order status to completed
-    await updateOrderStatus(orderReference, 'completed')
+    await updateOrderStatus(orderReference, 'package-sent-to-customer')
 
     console.log(`Ready-to-ship notification sent successfully for order: ${orderReference}`)
 

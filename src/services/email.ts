@@ -16,9 +16,6 @@ const BUSINESS_EMAIL = 'OFFseason <info@offseasonshoes.com>'
 const CC_EMAILS = [
   'info@offseasonclothing.co.uk',
   'ash@offseasonclothing.co.uk', 
-  'cieran@offseasonclothing.co.uk',
-  'brad@offseasonclothing.co.uk',
-  'rhea@offseasonclothing.co.uk',
   'developers@offseasonclothing.co.uk',
   'developer.offseason@gmail.com'
 ]
